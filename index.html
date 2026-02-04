@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- GitHub Pages rebuild -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>College Announcements</title>
+
+  <title>College Announcements Website</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="A college announcement website where students can log in and view important school updates and notices.">
+  <meta name="keywords" content="college announcements, student notice board, school updates">
+  <meta name="author" content="College Announcement System">
+
   <link rel="stylesheet" href="style.css">
 
   <!-- Firebase Scripts -->
@@ -14,6 +22,7 @@
   <!-- Your JS -->
   <script src="app.js" defer></script>
 </head>
+
 <body>
   <div class="container">
     <header>
@@ -23,8 +32,8 @@
     <!-- LOGIN SECTION -->
     <section id="login-section">
       <h2>Login</h2>
-      <input type="email" id="email" placeholder="Email">
-      <input type="password" id="password" placeholder="Password">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
 
       <button onclick="login()">Login</button>
       <button onclick="signup()">Sign Up</button>
