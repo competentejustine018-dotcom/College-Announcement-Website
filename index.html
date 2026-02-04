@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Announcements</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <!-- Your JS -->
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>College Announcements</h1>
+    </header>
+
+    <!-- LOGIN SECTION -->
+    <section id="login-section">
+      <h2>Login</h2>
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="password" placeholder="Password">
+
+      <button onclick="login()">Login</button>
+      <button onclick="signup()">Sign Up</button>
+      <button class="forgot-btn" onclick="forgotPassword()">Forgot Password?</button>
+    </section>
+
+    <!-- ANNOUNCEMENTS SECTION -->
+    <section id="announcement-section" style="display:none;">
+      <h2>Announcements</h2>
+      <ul id="announcement-list"></ul>
+
+      <!-- ADMIN PANEL -->
+      <div id="admin-panel">
+        <h3>Add Announcement</h3>
+        <input type="text" id="announcement-title" placeholder="Title">
+        <textarea id="announcement-body" placeholder="Announcement details"></textarea>
+        <button onclick="addAnnouncement()">Post</button>
+      </div>
+
+      <button onclick="logout()">Logout</button>
+    </section>
+  </div>
+</body>
+</html>

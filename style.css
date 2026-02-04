@@ -1,0 +1,100 @@
+/* BODY & BACKGROUND */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* MAIN CONTAINER */
+.container {
+  width: 95%;
+  max-width: 550px;   /* BIG LOGIN BOX */
+  background: white;
+  border-radius: 16px;
+
+  /* BLACK LINE */
+  border: 2px solid black;
+
+  /* PINK GLOW */
+  box-shadow:
+    0 0 12px rgba(255, 20, 147, 0.8),
+    0 0 25px rgba(255, 20, 147, 0.6);
+
+  padding: 30px;
+}
+
+/* HEADINGS */
+h1 {
+  text-align: center;
+  font-size: 28px;
+  color: black;
+}
+
+h2 {
+  text-align: center;
+  font-size: 22px;
+  color: black;
+}
+
+h3 {
+  text-align: center;
+  font-size: 18px;
+  color: black;
+}
+
+/* INPUTS, TEXTAREA & BUTTONS */
+input, textarea, button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Specific style for email, password, title and announcement details */
+#email, #password, #announcement-title, #announcement-body {
+  border: 2px solid black;       /* solid black border */
+  outline: none;                 /* remove default outline */
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#email:focus, #password:focus, #announcement-title:focus, #announcement-body:focus {
+  border-color: #ff1493;         /* pink border on focus */
+  box-shadow: 0 0 5px #ff1493;   /* subtle pink glow */
+}
+
+button {
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 14px;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* FORGOT PASSWORD BUTTON */
+.forgot-btn {
+  background: none;
+  color: #ff1493;
+  border: none;
+  margin-top: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 15px;
+}
+
+/* ANNOUNCEMENT LIST */
+ul {
+  list-style: none;
+  padding: 0;
+}
