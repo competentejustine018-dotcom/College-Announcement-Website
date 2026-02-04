@@ -40,16 +40,19 @@ function signup() {
     return;
   }
 
-  auth.createUserWithEmailAndAndPassword(email, password)
+  auth.createUserWithEmailAndPassword(email, password)
     .then(cred => {
-      // Create Firestore user document
       return db.collection("users").doc(cred.user.uid).set({
         role: "user"
       });
     })
     .then(() => alert("Account created! You can now log in."))
-    .catch(err => alert(err.message));
+    .catch(err => {
+      console.error(err);
+      alert(err.message);
+    });
 }
+
 
 
 // -------------------- FORGOT PASSWORD --------------------
@@ -294,4 +297,5 @@ auth.onAuthStateChanged(user => {
       auth.signOut();
     });
 });
+
 
