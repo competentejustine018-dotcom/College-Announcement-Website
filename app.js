@@ -1,4 +1,4 @@
-// Firebase configuration
+// -------------------- FIREBASE SETUP --------------------
 const firebaseConfig = {
   apiKey: "AIzaSyCcVtZXSdbaalzz5AsBvvYpAS4fYgKcU5s",
   authDomain: "collegeannouncementwebsi-e19bc.firebaseapp.com",
@@ -8,7 +8,6 @@ const firebaseConfig = {
   appId: "1:212741009923:web:8de5e514f9af0e56da9436"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -16,8 +15,8 @@ const db = firebase.firestore();
 
 // -------------------- LOGIN --------------------
 function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
   auth.signInWithEmailAndPassword(email, password)
     .catch(err => alert(err.message));
@@ -26,8 +25,8 @@ function login() {
 
 // -------------------- SIGN UP --------------------
 function signup() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
   if (!email || !password) {
     alert("Please enter both email and password.");
@@ -36,27 +35,27 @@ function signup() {
 
   auth.createUserWithEmailAndPassword(email, password)
     .then(cred => {
-      // Create user document (non-admin by default)
+      // Create Firestore user document
       return db.collection("users").doc(cred.user.uid).set({
         role: "user"
       });
     })
-    .then(() => alert("Account created! Please login."))
+    .then(() => alert("Account created! You can now log in."))
     .catch(err => alert(err.message));
 }
 
 
 // -------------------- FORGOT PASSWORD --------------------
 function forgotPassword() {
-  const email = document.getElementById("email").value;
+  const email = emailInput.value;
 
   if (!email) {
-    alert("Please enter your email to reset password.");
+    alert("Enter your email first.");
     return;
   }
 
   auth.sendPasswordResetEmail(email)
-    .then(() => alert("Password reset email sent! Check your inbox."))
+    .then(() => alert("Password reset email sent!"))
     .catch(err => alert(err.message));
 }
 
@@ -73,13 +72,13 @@ function addAnnouncement() {
   const body = document.getElementById("announcement-body").value.trim();
 
   if (!title || !body) {
-    alert("Please enter both title and announcement details.");
+    alert("Please fill in all fields.");
     return;
   }
 
   db.collection("announcements").add({
-    title: title,
-    body: body,
+    title,
+    body,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   })
   .then(() => {
@@ -106,24 +105,36 @@ function loadAnnouncements() {
         li.innerHTML = `<strong>${data.title}</strong><p>${data.body}</p>`;
         list.appendChild(li);
       });
-    });
+    })
+    .catch(err => console.error("Load error:", err));
 }
 
 
-// -------------------- AUTH STATE CHANGE --------------------
+// -------------------- AUTH STATE CHECK --------------------
 auth.onAuthStateChanged(user => {
+  const loginSection = document.getElementById("login-section");
+  const announcementSection = document.getElementById("announcement-section");
+
   if (!user) {
-    document.getElementById("login-section").style.display = "block";
-    document.getElementById("announcement-section").style.display = "none";
+    loginSection.style.display = "block";
+    announcementSection.style.display = "none";
     return;
   }
 
-  // Check role from Firestore
+  // 🔥 IMPORTANT: role must be in users/{uid}
   db.collection("users").doc(user.uid).get()
     .then(doc => {
-      if (doc.exists && doc.data().role === "admin") {
-        document.getElementById("login-section").style.display = "none";
-        document.getElementById("announcement-section").style.display = "block";
+      if (!doc.exists) {
+        alert("User record not found.");
+        auth.signOut();
+        return;
+      }
+
+      const role = doc.data().role;
+
+      if (role === "admin") {
+        loginSection.style.display = "none";
+        announcementSection.style.display = "block";
         loadAnnouncements();
       } else {
         alert("Not authorized");
@@ -131,7 +142,7 @@ auth.onAuthStateChanged(user => {
       }
     })
     .catch(err => {
-      console.error(err);
+      console.error("Role check error:", err);
       auth.signOut();
     });
 });
