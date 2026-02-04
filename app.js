@@ -13,9 +13,8 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-const ADMIN_EMAIL = "competentejustine018@gmail.com";
 
-// LOGIN
+// -------------------- LOGIN --------------------
 function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -24,7 +23,8 @@ function login() {
     .catch(err => alert(err.message));
 }
 
-// SIGN UP
+
+// -------------------- SIGN UP --------------------
 function signup() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -35,13 +35,21 @@ function signup() {
   }
 
   auth.createUserWithEmailAndPassword(email, password)
+    .then(cred => {
+      // Create user document (non-admin by default)
+      return db.collection("users").doc(cred.user.uid).set({
+        role: "user"
+      });
+    })
     .then(() => alert("Account created! Please login."))
     .catch(err => alert(err.message));
 }
 
-// FORGOT PASSWORD
+
+// -------------------- FORGOT PASSWORD --------------------
 function forgotPassword() {
   const email = document.getElementById("email").value;
+
   if (!email) {
     alert("Please enter your email to reset password.");
     return;
@@ -52,12 +60,14 @@ function forgotPassword() {
     .catch(err => alert(err.message));
 }
 
-// LOGOUT
+
+// -------------------- LOGOUT --------------------
 function logout() {
   auth.signOut();
 }
 
-// ADD ANNOUNCEMENT
+
+// -------------------- ADD ANNOUNCEMENT --------------------
 function addAnnouncement() {
   const title = document.getElementById("announcement-title").value.trim();
   const body = document.getElementById("announcement-body").value.trim();
@@ -73,17 +83,18 @@ function addAnnouncement() {
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   })
   .then(() => {
-    document.getElementById("announcement-title").value = '';
-    document.getElementById("announcement-body").value = '';
+    document.getElementById("announcement-title").value = "";
+    document.getElementById("announcement-body").value = "";
     loadAnnouncements();
   })
   .catch(err => alert("Error posting announcement: " + err.message));
 }
 
-// LOAD ANNOUNCEMENTS
+
+// -------------------- LOAD ANNOUNCEMENTS --------------------
 function loadAnnouncements() {
   const list = document.getElementById("announcement-list");
-  list.innerHTML = '';
+  list.innerHTML = "";
 
   db.collection("announcements")
     .orderBy("createdAt", "desc")
@@ -98,19 +109,29 @@ function loadAnnouncements() {
     });
 }
 
-// AUTH STATE CHANGE
+
+// -------------------- AUTH STATE CHANGE --------------------
 auth.onAuthStateChanged(user => {
-  if (user) {
-    if (user.email === ADMIN_EMAIL) {
-      document.getElementById("login-section").style.display = "none";
-      document.getElementById("announcement-section").style.display = "block";
-      loadAnnouncements();
-    } else {
-      alert("Not authorized");
-      auth.signOut();
-    }
-  } else {
+  if (!user) {
     document.getElementById("login-section").style.display = "block";
     document.getElementById("announcement-section").style.display = "none";
+    return;
   }
+
+  // Check role from Firestore
+  db.collection("users").doc(user.uid).get()
+    .then(doc => {
+      if (doc.exists && doc.data().role === "admin") {
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("announcement-section").style.display = "block";
+        loadAnnouncements();
+      } else {
+        alert("Not authorized");
+        auth.signOut();
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      auth.signOut();
+    });
 });
